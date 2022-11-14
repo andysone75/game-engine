@@ -3,7 +3,7 @@
 
 #include <array>
 
-static void GeneratePolyNormals(std::vector<Vertex>& vertices, std::vector<Triangle> tris);
+static void GeneratePolyNormals(std::vector<Vertex>& vertices, std::vector<Triangle>& tris);
 static void GenerateNormals(std::vector<Vertex>& vertices, std::vector<Triangle> tris);
 
 class Scene {
@@ -18,8 +18,6 @@ public:
 
 private:
 	GameObject* createGameObject();
-	//GameObject* createCube(Shader* shader);
-	GameObject* createSphere(Shader* shader);
 };
 
 Scene::Scene() {
@@ -29,16 +27,30 @@ Scene::Scene() {
 	shaders.push_back(shaderLit);
 	shaders.push_back(shaderDefault);
 
+	Mesh cubeMesh = geometry::createCube();
+	GeneratePolyNormals(cubeMesh.vertices, cubeMesh.triangles);
+
+	Mesh sphereMesh = geometry::createIcosphere(2);
+	GeneratePolyNormals(sphereMesh.vertices, sphereMesh.triangles);
+
 	GameObject* light = createGameObject();
-	light->addComponent(new MeshRenderer(geometry::createIcosphere(3), shaderDefault));
+	light->addComponent(new MeshRenderer(sphereMesh, shaderDefault));
 	light->addComponent(new Light(glm::vec3(1.0f, 1.0f, 1.0f)));
 	light->scale = glm::vec3(.3f);
 	light->position = glm::vec3(0.0f, 3.0f, 0.0f);
 
+	GameObject* ground = createGameObject();
+	ground->addComponent(new MeshRenderer(cubeMesh, shaderLit));
+	ground->position = glm::vec3(0.0f, -1.5f, 0.0f);
+	ground->scale = glm::vec3(8.0f, 0.1f, 8.0f);
+
 	GameObject* cube = createGameObject();
-	Mesh cubeMesh = geometry::createCube();
-	GeneratePolyNormals(cubeMesh.vertices, cubeMesh.triangles);
 	cube->addComponent(new MeshRenderer(cubeMesh, shaderLit));
+	cube->position = glm::vec3(-2.0f, 0.0f, 0.0f);
+
+	GameObject* sphere = createGameObject();
+	sphere->addComponent(new MeshRenderer(sphereMesh, shaderLit));
+	sphere->position = glm::vec3(2.0f, 0.0f, 0.0f);
 
 	for (size_t i = 0; i < gameObjects.size(); i++)
 	{
@@ -62,18 +74,9 @@ GameObject* Scene::createGameObject() {
 	return gameObject;
 }
 
-GameObject* Scene::createSphere(Shader* shader) {
-	//Mesh mesh = sphere::createIcosphere(5);
-	Mesh mesh = geometry::createUVSphere(1.0f, 16, 16);
-	GenerateNormals(mesh.vertices, mesh.triangles);
-
-	GameObject* go = createGameObject();
-	go->addComponent(new MeshRenderer(mesh, shader));
-
-	return go;
-}
-
-static void GeneratePolyNormals(std::vector<Vertex>& vertices, std::vector<Triangle> tris) {
+static void GeneratePolyNormals(std::vector<Vertex>& vertices, std::vector<Triangle>& tris) {
+	std::vector<Vertex> newVertices;
+	std::vector<Triangle> newTris;
 	for (int i = 0; i < tris.size(); i++)
 	{
 		Vertex a = vertices[tris[i].i0];
@@ -87,7 +90,19 @@ static void GeneratePolyNormals(std::vector<Vertex>& vertices, std::vector<Trian
 		vertices[tris[i].i0].normal = Vector3Float(n);
 		vertices[tris[i].i1].normal = Vector3Float(n);
 		vertices[tris[i].i2].normal = Vector3Float(n);
+
+		a.normal = Vector3Float(n);
+		b.normal = Vector3Float(n);
+		c.normal = Vector3Float(n);
+
+		newVertices.push_back(a);
+		newVertices.push_back(b);
+		newVertices.push_back(c);
+
+		newTris.push_back(Triangle(i * 3 + 0, i * 3 + 1, i * 3 + 2));
 	}
+	vertices = newVertices;
+	tris = newTris;
 }
 
 static void GenerateNormals(std::vector<Vertex>& vertices, std::vector<Triangle> tris) {

@@ -17,5 +17,5 @@ void main() {
 
 	vertexPos = (model * vec4(pos, 1.0)).xyz;
 	vertexColor = color;
-	vertexNormal = (model * vec4(normal, 0.0)).xyz;
+	vertexNormal = mat3(transpose(inverse(model))) * normal;
 }

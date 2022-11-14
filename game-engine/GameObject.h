@@ -24,7 +24,7 @@ private:
 void GameObject::update(float dt) {
 	timer += dt;
 	transform = glm::translate(glm::mat4(1.0f), position);
-	transform = glm::rotate(transform, timer * .35f, glm::vec3(0.58f));
+	//transform = glm::rotate(transform, timer * .35f, glm::vec3(0.58f));
 	transform = glm::scale(transform, scale);
 }
 
