@@ -3,19 +3,17 @@
 
 class Light : public Component {
 public:
-	Light(glm::vec3 color);
-	glm::vec3 getColor();
+	glm::vec3 ambient;
+	glm::vec3 diffuse;
+	glm::vec3 specular;
 
-private:
-	glm::vec3 color;
+	Light();
 };
 
-Light::Light(glm::vec3 color) {
-	this->color = color;
-}
-
-glm::vec3 Light::getColor() {
-	return color;
+Light::Light() {
+	ambient = glm::vec3(0.1f);
+	diffuse = glm::vec3(1.0f);
+	specular = glm::vec3(1.0f);
 }
 
 #endif

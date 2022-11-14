@@ -76,6 +76,8 @@ int main() {
 		glm::mat4 view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
 		scene->update(deltaTime);
 
+		Light* light = scene->light->getComponent<Light>();
+
 		for (size_t i = 0; i < scene->gameObjects.size(); i++)
 		{
 			GameObject* gameObject = scene->gameObjects[i];
@@ -92,8 +94,10 @@ int main() {
 			shader->use();
 			shader->setMat4("model", gameObject->getTransform());
 			shader->setMat4("view", view);
-			shader->setFloat3("lightPos", lightPos.x, lightPos.y, lightPos.z);
-			shader->setFloat3("lightColor", scene->light->getComponent<Light>()->getColor());
+			shader->setFloat3("light.position", lightPos.x, lightPos.y, lightPos.z);
+			shader->setFloat3("light.ambient", light->ambient);
+			shader->setFloat3("light.diffuse", light->diffuse);
+			shader->setFloat3("light.specular", light->specular);
 			shader->setFloat3("viewPos", cameraPos);
 
 			glBindVertexArray(meshRenderer->VAO);

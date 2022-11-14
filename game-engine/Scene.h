@@ -60,7 +60,7 @@ Scene::Scene() {
 
 	GameObject* light = createGameObject();
 	light->addComponent(new MeshRenderer(icoSphereMesh2, lightMaterial));
-	light->addComponent(new Light(glm::vec3(1.0f, 1.0f, 1.0f)));
+	light->addComponent(new Light());
 	light->scale = glm::vec3(.3f);
 	light->position = glm::vec3(0.0f, 3.0f, 0.0f);
 
