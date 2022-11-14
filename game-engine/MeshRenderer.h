@@ -9,12 +9,12 @@ public:
 	unsigned int VAO;
 	unsigned int indicesCount;
 	Mesh mesh;
-	Shader* shader;
+	Material* material;
 
-	MeshRenderer(Mesh mesh, Shader* shader);
+	MeshRenderer(Mesh mesh, Material* material);
 };
 
-MeshRenderer::MeshRenderer(Mesh mesh, Shader* shader) {
+MeshRenderer::MeshRenderer(Mesh mesh, Material* material) {
 	unsigned int VBO;
 	unsigned int EBO;
 
@@ -40,7 +40,7 @@ MeshRenderer::MeshRenderer(Mesh mesh, Shader* shader) {
 
 	this->indicesCount = mesh.triangles.size() * 3;
 	this->mesh = mesh;
-	this->shader = shader;
+	this->material = material;
 }
 
 #endif

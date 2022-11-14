@@ -36,28 +36,50 @@ Scene::Scene() {
 	Mesh icoSphereMesh5 = geometry::createIcosphere(5);
 	GeneratePolyNormals(icoSphereMesh5.vertices, icoSphereMesh5.triangles);
 
+	Material* defaultMaterial = new Material(shaderLit);
+
+	Material* emeraldMaterial = new Material(shaderLit);
+	emeraldMaterial->ambient = glm::vec3(0.0215f, 0.1745f, 0.0215f);
+	emeraldMaterial->diffuse = glm::vec3(0.07568f, 0.61424f, 0.07568);
+	emeraldMaterial->specular = glm::vec3(0.633f, 0.727811f, 0.633f);
+	emeraldMaterial->shininess = 0.6f * 128.0f;
+
+	Material* silverMaterial = new Material(shaderLit);
+	silverMaterial->ambient = glm::vec3(0.19225f);
+	silverMaterial->diffuse = glm::vec3(0.50754f);
+	silverMaterial->specular = glm::vec3(0.508273f);
+	silverMaterial->shininess = 0.4f * 128.0f;
+
+	Material* plasticMaterial = new Material(shaderLit);
+	plasticMaterial->ambient = glm::vec3(0.0f);
+	plasticMaterial->diffuse = glm::vec3(0.55f);
+	plasticMaterial->specular = glm::vec3(0.7f);
+	plasticMaterial->shininess = 0.25f * 128.0f;
+
+	Material* lightMaterial = new Material(shaderDefault);
+
 	GameObject* light = createGameObject();
-	light->addComponent(new MeshRenderer(icoSphereMesh2, shaderDefault));
-	light->addComponent(new Light(glm::vec3(1.0f, 1.0f, 0.78f)));
+	light->addComponent(new MeshRenderer(icoSphereMesh2, lightMaterial));
+	light->addComponent(new Light(glm::vec3(1.0f, 1.0f, 1.0f)));
 	light->scale = glm::vec3(.3f);
 	light->position = glm::vec3(0.0f, 3.0f, 0.0f);
 
 	GameObject* ground = createGameObject();
-	ground->addComponent(new MeshRenderer(cubeMesh, shaderLit));
+	ground->addComponent(new MeshRenderer(cubeMesh, defaultMaterial));
 	ground->position = glm::vec3(0.0f, -1.5f, 0.0f);
 	ground->scale = glm::vec3(8.0f, 0.1f, 8.0f);
 
 	GameObject* cube = createGameObject();
-	cube->addComponent(new MeshRenderer(cubeMesh, shaderLit));
+	cube->addComponent(new MeshRenderer(cubeMesh, silverMaterial));
 	cube->position = glm::vec3(-3.0f, 0.0f, 0.0f);
 	cube->scale = glm::vec3(1.5f);
 
-	GameObject* uvSphere = createGameObject();
-	uvSphere->addComponent(new MeshRenderer(icoSphereMesh5, shaderLit));
+	GameObject* icoSphere5 = createGameObject();
+	icoSphere5->addComponent(new MeshRenderer(icoSphereMesh5, emeraldMaterial));
 
-	GameObject* icoSphere = createGameObject();
-	icoSphere->addComponent(new MeshRenderer(icoSphereMesh2, shaderLit));
-	icoSphere->position = glm::vec3(3.0f, 0.0f, 0.0f);
+	GameObject* icoSphere2 = createGameObject();
+	icoSphere2->addComponent(new MeshRenderer(icoSphereMesh2, plasticMaterial));
+	icoSphere2->position = glm::vec3(3.0f, 0.0f, 0.0f);
 
 	for (size_t i = 0; i < gameObjects.size(); i++)
 	{

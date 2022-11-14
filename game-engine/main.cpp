@@ -84,9 +84,11 @@ int main() {
 			if (meshRenderer == NULL)
 				continue;
 
-			Shader* shader = meshRenderer->shader;
+			Material* material = meshRenderer->material;
+			Shader* shader = material->getShader();
 			glm::vec4 lightPos = scene->light->getTransform()[3];
 
+			material->updateShader();
 			shader->use();
 			shader->setMat4("model", gameObject->getTransform());
 			shader->setMat4("view", view);
