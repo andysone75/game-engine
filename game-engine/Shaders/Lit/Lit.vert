@@ -18,4 +18,7 @@ void main() {
 	vertexPos = (model * vec4(pos, 1.0)).xyz;
 	vertexColor = color;
 	vertexNormal = mat3(transpose(inverse(model))) * normal;
+
+//	vertexPos += normal * 0.5;
+//	gl_Position = projection * view * vec4(vertexPos, 1.0);
 }

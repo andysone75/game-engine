@@ -92,6 +92,7 @@ int main() {
 			shader->setMat4("view", view);
 			shader->setFloat3("lightPos", lightPos.x, lightPos.y, lightPos.z);
 			shader->setFloat3("lightColor", scene->light->getComponent<Light>()->getColor());
+			shader->setFloat3("viewPos", cameraPos);
 
 			glBindVertexArray(meshRenderer->VAO);
 			glDrawElements(GL_TRIANGLES, meshRenderer->indicesCount, GL_UNSIGNED_INT, 0);

@@ -30,12 +30,15 @@ Scene::Scene() {
 	Mesh cubeMesh = geometry::createCube();
 	GeneratePolyNormals(cubeMesh.vertices, cubeMesh.triangles);
 
-	Mesh sphereMesh = geometry::createIcosphere(2);
-	GeneratePolyNormals(sphereMesh.vertices, sphereMesh.triangles);
+	Mesh icoSphereMesh2 = geometry::createIcosphere(2);
+	GeneratePolyNormals(icoSphereMesh2.vertices, icoSphereMesh2.triangles);
+
+	Mesh icoSphereMesh5 = geometry::createIcosphere(5);
+	GeneratePolyNormals(icoSphereMesh5.vertices, icoSphereMesh5.triangles);
 
 	GameObject* light = createGameObject();
-	light->addComponent(new MeshRenderer(sphereMesh, shaderDefault));
-	light->addComponent(new Light(glm::vec3(1.0f, 1.0f, 1.0f)));
+	light->addComponent(new MeshRenderer(icoSphereMesh2, shaderDefault));
+	light->addComponent(new Light(glm::vec3(1.0f, 1.0f, 0.78f)));
 	light->scale = glm::vec3(.3f);
 	light->position = glm::vec3(0.0f, 3.0f, 0.0f);
 
@@ -46,11 +49,15 @@ Scene::Scene() {
 
 	GameObject* cube = createGameObject();
 	cube->addComponent(new MeshRenderer(cubeMesh, shaderLit));
-	cube->position = glm::vec3(-2.0f, 0.0f, 0.0f);
+	cube->position = glm::vec3(-3.0f, 0.0f, 0.0f);
+	cube->scale = glm::vec3(1.5f);
 
-	GameObject* sphere = createGameObject();
-	sphere->addComponent(new MeshRenderer(sphereMesh, shaderLit));
-	sphere->position = glm::vec3(2.0f, 0.0f, 0.0f);
+	GameObject* uvSphere = createGameObject();
+	uvSphere->addComponent(new MeshRenderer(icoSphereMesh5, shaderLit));
+
+	GameObject* icoSphere = createGameObject();
+	icoSphere->addComponent(new MeshRenderer(icoSphereMesh2, shaderLit));
+	icoSphere->position = glm::vec3(3.0f, 0.0f, 0.0f);
 
 	for (size_t i = 0; i < gameObjects.size(); i++)
 	{
