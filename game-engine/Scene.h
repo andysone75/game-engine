@@ -33,7 +33,7 @@ Scene::Scene() {
 	Mesh icoSphereMesh2 = geometry::createIcosphere(2);
 	GeneratePolyNormals(icoSphereMesh2.vertices, icoSphereMesh2.triangles);
 
-	Mesh icoSphereMesh5 = geometry::createIcosphere(5);
+	Mesh icoSphereMesh5 = geometry::createIcosphere(6);
 	GeneratePolyNormals(icoSphereMesh5.vertices, icoSphereMesh5.triangles);
 
 	Material* defaultMaterial = new Material(shaderLit);
