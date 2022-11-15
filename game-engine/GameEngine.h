@@ -9,7 +9,6 @@
 
 #include "Shader.h"
 #include "Material.h"
-#include "Vertex.h"
 #include "Mesh.h"
 #include "Geometry.h"
 #include "Component.h"

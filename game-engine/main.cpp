@@ -77,6 +77,7 @@ int main() {
 		scene->update(deltaTime);
 
 		Light* light = scene->light->getComponent<Light>();
+		glm::vec4 lightPos = scene->light->getTransform()[3];
 
 		for (size_t i = 0; i < scene->gameObjects.size(); i++)
 		{
@@ -88,7 +89,6 @@ int main() {
 
 			Material* material = meshRenderer->material;
 			Shader* shader = material->getShader();
-			glm::vec4 lightPos = scene->light->getTransform()[3];
 
 			material->updateShader();
 			shader->use();
@@ -100,8 +100,7 @@ int main() {
 			shader->setFloat3("light.specular", light->specular);
 			shader->setFloat3("viewPos", cameraPos);
 
-			glBindVertexArray(meshRenderer->VAO);
-			glDrawElements(GL_TRIANGLES, meshRenderer->indicesCount, GL_UNSIGNED_INT, 0);
+			meshRenderer->Draw();
 		}
 
 		glfwSwapBuffers(window);

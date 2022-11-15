@@ -10,7 +10,7 @@ public:
 	std::vector<Component*> components = std::vector<Component*>();
 
 	void update(float dt);
-	void addComponent(Component* component);
+	GameObject* addComponent(Component* component);
 	glm::mat4 getTransform();
 	
 	template<class T>
@@ -28,8 +28,9 @@ void GameObject::update(float dt) {
 	transform = glm::scale(transform, scale);
 }
 
-void GameObject::addComponent(Component* component) {
+GameObject* GameObject::addComponent(Component* component) {
 	components.push_back(component);
+	return this;
 }
 
 glm::mat4 GameObject::getTransform() {
