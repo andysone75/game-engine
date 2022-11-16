@@ -27,8 +27,15 @@ Scene::Scene() {
 	Mesh* cubeMesh = geometry::createCube();
 	Model* cubeSphereModel = new Model("Models/cube_sphere.fbx");
 	Model* hotdogModel = new Model("Models/hotdog.fbx");
+	Model* shaderBallModel = new Model("Models/shader-ball/source/shader_ball.obj");
 
+	int channelsCount;
+	Texture shaderBallDiffuse;
+	shaderBallDiffuse.data = stbi_load("Models/shader-ball/textures/ShaderBallJL01_BaseColor.jpeg", &shaderBallDiffuse.width, &shaderBallDiffuse.height, &channelsCount, 0);
+
+	Material* lightMaterial = new Material(shaderDefault);
 	Material* defaultMaterial = new Material(shaderLit);
+	Material* shaderBallMaterial = new Material(shaderLit, &shaderBallDiffuse, GL_RGB);
 
 	Material* emeraldMaterial = new Material(shaderLit);
 	emeraldMaterial->ambient = glm::vec3(0.0215f, 0.1745f, 0.0215f);
@@ -47,8 +54,8 @@ Scene::Scene() {
 	plasticMaterial->diffuse = glm::vec3(0.55f);
 	plasticMaterial->specular = glm::vec3(0.7f);
 	plasticMaterial->shininess = 0.25f * 128.0f;
-
-	Material* lightMaterial = new Material(shaderDefault);
+	
+	stbi_image_free(shaderBallDiffuse.data);
 
 	GameObject* light = createGameObject();
 	light->addComponent(new MeshRenderer(cubeMesh, lightMaterial));
@@ -56,20 +63,53 @@ Scene::Scene() {
 	light->scale = glm::vec3(.3f);
 	light->position = glm::vec3(0.0f, 3.0f, 0.0f);
 
-	GameObject* ground = createGameObject()
-		->addComponent(new MeshRenderer(cubeMesh, defaultMaterial));
-	ground->position = glm::vec3(0.0f, -1.5f, 0.0f);
-	ground->scale = glm::vec3(8.0f, 0.1f, 8.0f);
+	//GameObject* ground = createGameObject()
+	//	->addComponent(new MeshRenderer(cubeMesh, defaultMaterial));
+	//ground->position = glm::vec3(0.0f, -1.5f, 0.0f);
+	//ground->scale = glm::vec3(8.0f, 0.1f, 8.0f);
 
-	GameObject* sphere = createGameObject()
-		->addComponent(new MeshRenderer(cubeSphereModel->getMesh(0), emeraldMaterial));
-	sphere->scale = glm::vec3(0.7f);
-	sphere->position = glm::vec3(1.0f, 0.0f, 0.0f);
+	//GameObject* sphere = createGameObject()
+	//	->addComponent(new MeshRenderer(cubeSphereModel->getMesh(0), emeraldMaterial));
+	//sphere->scale = glm::vec3(0.7f);
+	//sphere->position = glm::vec3(1.0f, 0.0f, 0.0f);
 
-	GameObject* hotdog = createGameObject()
-		->addComponent(new MeshRenderer(hotdogModel->getMesh(0), plasticMaterial));
-	hotdog->scale = glm::vec3(0.05f);
-	hotdog->position = glm::vec3(-1.0f, 0.0f, 0.0f);
+	//GameObject* hotdog = createGameObject()
+	//	->addComponent(new MeshRenderer(hotdogModel->getMesh(0), plasticMaterial));
+	//hotdog->scale = glm::vec3(0.05f);
+	//hotdog->position = glm::vec3(-1.0f, 0.0f, 0.0f);
+
+	//GameObject* hotdogSilver = createGameObject()
+	//	->addComponent(new MeshRenderer(hotdogModel->getMesh(0), silverMaterial));
+	//hotdogSilver->scale = glm::vec3(0.05f);
+	//hotdogSilver->position = glm::vec3(0.0f, 0.0f, 0.0f);
+
+	//GameObject* hotdogEmerald = createGameObject()
+	//	->addComponent(new MeshRenderer(hotdogModel->getMesh(0), emeraldMaterial));
+	//hotdogEmerald->scale = glm::vec3(0.05f);
+	//hotdogEmerald->position = glm::vec3(1.0f, 0.0f, 0.0f);
+
+	std::array<Material*, 1> shaderBallMaterials = {
+		shaderBallMaterial,
+	};
+
+	float scale = 1.0f;
+	glm::vec3 pos = glm::vec3(0.0f, 0.5f, -1.5f);
+	for (unsigned int i = 0; i < shaderBallModel->getMeshesCount(); i++)
+	{
+		Material* mat;
+
+		if (i >= shaderBallMaterials.size()) {
+			mat = defaultMaterial;
+		}
+		else {
+			mat = shaderBallMaterials[i];
+		}
+
+		GameObject* o = createGameObject()
+			->addComponent(new MeshRenderer(shaderBallModel->getMesh(i), mat));
+		o->scale = glm::vec3(scale);
+		o->position = pos;
+	}
 
 	for (size_t i = 0; i < gameObjects.size(); i++)
 	{

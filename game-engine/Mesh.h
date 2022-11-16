@@ -12,6 +12,7 @@ struct Vertex {
 public:
 	glm::vec3 position;
 	glm::vec3 normal;
+	glm::vec2 uv;
 
 	Vertex() = default;
 	Vertex(glm::vec3 position) { this->position = position; }
@@ -83,6 +84,9 @@ void Mesh::setupMesh() {
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, normal));
 
+	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, uv));
+
 	glBindVertexArray(0);
 }
 
@@ -97,6 +101,7 @@ public:
 	}
 
 	Mesh* getMesh(unsigned int meshIndex);
+	unsigned int getMeshesCount();
 private:
 	std::vector<Mesh> meshes;
 	std::string directory;
@@ -108,6 +113,10 @@ private:
 
 Mesh* Model::getMesh(unsigned int meshIndex) {
 	return &meshes[meshIndex];
+}
+
+unsigned int Model::getMeshesCount() {
+	return meshes.size();
 }
 
 void Model::loadModel(std::string path) {
@@ -142,9 +151,11 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene) {
 	{
 		aiVector3D pos = mesh->mVertices[i];
 		aiVector3D normal = mesh->mNormals[i];
+		aiVector3D uv = mesh->mTextureCoords[0][i];
 
 		Vertex vertex = Vertex(glm::vec3(pos.x, pos.y, pos.z));
 		vertex.normal = glm::vec3(normal.x, normal.y, normal.z);
+		vertex.uv = glm::vec2(uv.x, uv.y);
 
 		vertices.push_back(vertex);
 	}

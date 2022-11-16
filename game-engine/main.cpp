@@ -5,8 +5,8 @@
 
 using namespace std;
 
-#define WINDOW_WIDTH 1280
-#define WINDOW_HEIGHT 720
+#define WINDOW_WIDTH  1920
+#define WINDOW_HEIGHT 1080
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
@@ -99,6 +99,8 @@ int main() {
 			shader->setFloat3("light.diffuse", light->diffuse);
 			shader->setFloat3("light.specular", light->specular);
 			shader->setFloat3("viewPos", cameraPos);
+
+			material->bindTextures();
 
 			meshRenderer->Draw();
 		}
