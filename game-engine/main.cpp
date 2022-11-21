@@ -94,10 +94,11 @@ int main() {
 			shader->use();
 			shader->setMat4("model", gameObject->getTransform());
 			shader->setMat4("view", view);
-			shader->setFloat3("light.position", lightPos.x, lightPos.y, lightPos.z);
 			shader->setFloat3("light.ambient", light->ambient);
 			shader->setFloat3("light.diffuse", light->diffuse);
 			shader->setFloat3("light.specular", light->specular);
+
+			shader->setFloat3("lightPos", lightPos.x, lightPos.y, lightPos.z);
 			shader->setFloat3("viewPos", cameraPos);
 
 			material->bindTextures();

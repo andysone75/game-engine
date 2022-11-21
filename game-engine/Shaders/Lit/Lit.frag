@@ -5,31 +5,38 @@ struct Material {
 	vec3 diffuse;
 	vec3 specular;
 	float shininess;
+
+	sampler2D diffuseTexture;
+	sampler2D normalTexture;
 };
 
 struct Light {
-	vec3 position;
-
 	vec3 ambient;
 	vec3 diffuse;
 	vec3 specular;
 };
 
-in vec3 fragPos;
-in vec3 fragNormal;
-in vec2 fragUv;
+in VS_OUT {
+	vec3 fragPos;
+	vec3 fragNormal;
+	vec2 fragUv;
+	vec3 tangentLightPos;
+	vec3 tangentViewPos;
+	vec3 tangentFragPos;
+} fs_in;
 
 out vec4 fragColor;
 
-uniform sampler2D diffuseTexture;
 uniform Material material;
 uniform Light light;
-uniform vec3 viewPos;
 
 void main() {
-	vec3 normal = normalize(fragNormal);
-	vec3 lightDir = normalize(light.position - fragPos);
-	vec3 viewDir = normalize(viewPos - fragPos);
+//	vec3 normal = fs_in.fragNormal;
+	vec3 normal = texture(material.normalTexture, fs_in.fragUv).rgb;
+	normal = normal * 2.0 - 1.0;
+
+	vec3 lightDir = normalize(fs_in.tangentLightPos - fs_in.tangentFragPos);
+	vec3 viewDir = normalize(fs_in.tangentViewPos - fs_in.tangentFragPos);
 	vec3 reflectDir = reflect(-lightDir, normal);
 	
 	vec3 ambient = light.ambient * material.ambient;
@@ -41,7 +48,12 @@ void main() {
 	float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
 	vec3 specular = light.specular * material.specular * spec;
 	
-	vec4 diffuseColor = texture(diffuseTexture, fragUv);
+	vec4 diffuseColor = texture(material.diffuseTexture, fs_in.fragUv);
 	vec3 color = diffuseColor.rgb * (ambient + diffuse + specular);
 	fragColor = vec4(color, 1.0);
+
+//	fragColor = texture(material.diffuseTexture, fs_in.fragUv);	
+//	fragColor = texture(material.normalTexture, fs_in.fragUv);
+
+//	fragColor = vec4(normal, 1.0);
 }

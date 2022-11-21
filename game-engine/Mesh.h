@@ -13,6 +13,7 @@ public:
 	glm::vec3 position;
 	glm::vec3 normal;
 	glm::vec2 uv;
+	glm::vec3 tangent;
 
 	Vertex() = default;
 	Vertex(glm::vec3 position) { this->position = position; }
@@ -87,6 +88,9 @@ void Mesh::setupMesh() {
 	glEnableVertexAttribArray(2);
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, uv));
 
+	glEnableVertexAttribArray(3);
+	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, tangent));
+
 	glBindVertexArray(0);
 }
 
@@ -121,7 +125,7 @@ unsigned int Model::getMeshesCount() {
 
 void Model::loadModel(std::string path) {
 	Assimp::Importer import;
-	const aiScene* scene = import.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
+	const aiScene* scene = import.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
 
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
 		std::cout << "ERROR:ASSIMP::" << import.GetErrorString() << std::endl;
@@ -152,10 +156,12 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene) {
 		aiVector3D pos = mesh->mVertices[i];
 		aiVector3D normal = mesh->mNormals[i];
 		aiVector3D uv = mesh->mTextureCoords[0][i];
+		aiVector3D tangent = mesh->mTangents[i];
 
 		Vertex vertex = Vertex(glm::vec3(pos.x, pos.y, pos.z));
 		vertex.normal = glm::vec3(normal.x, normal.y, normal.z);
 		vertex.uv = glm::vec2(uv.x, uv.y);
+		vertex.tangent = glm::vec3(tangent.x, tangent.y, tangent.z);
 
 		vertices.push_back(vertex);
 	}
@@ -164,10 +170,6 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene) {
 	{
 		aiFace face = mesh->mFaces[i];
 		triangles.push_back(Triangle(face.mIndices[0], face.mIndices[1], face.mIndices[2]));
-	}
-
-	if (mesh->mMaterialIndex >= 0) {
-		// process material...
 	}
 
 	return Mesh(vertices, triangles);

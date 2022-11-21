@@ -7,13 +7,15 @@ class Scene {
 public:
 	Scene();
 
-	std::vector<GameObject*> gameObjects = std::vector<GameObject*>();
+	std::vector<GameObject*> gameObjects;
+	std::vector<Texture*> textures;
 	std::vector<Shader*> shaders;
 	GameObject* light;
 
 	void update(float dt);
 
 private:
+	void createTexture(const char* path, Texture* texture);
 	GameObject* createGameObject();
 };
 
@@ -30,12 +32,19 @@ Scene::Scene() {
 	Model* shaderBallModel = new Model("Models/shader-ball/source/shader_ball.obj");
 
 	int channelsCount;
+
 	Texture shaderBallDiffuse;
-	shaderBallDiffuse.data = stbi_load("Models/shader-ball/textures/ShaderBallJL01_BaseColor.jpeg", &shaderBallDiffuse.width, &shaderBallDiffuse.height, &channelsCount, 0);
+	Texture shaderBallNormal;
+
+	shaderBallDiffuse.type = "diffuseTexture";
+	shaderBallNormal.type = "normalTexture";
+
+	createTexture("Models/shader-ball/textures/ShaderBallJL01_BaseColor.jpeg", &shaderBallDiffuse);
+	createTexture("Models/shader-ball/textures/ShaderBallJL01_Normal.jpeg", &shaderBallNormal);
 
 	Material* lightMaterial = new Material(shaderDefault);
 	Material* defaultMaterial = new Material(shaderLit);
-	Material* shaderBallMaterial = new Material(shaderLit, &shaderBallDiffuse, GL_RGB);
+	Material* shaderBallMaterial = new Material(shaderLit, &shaderBallDiffuse, &shaderBallNormal);
 
 	Material* emeraldMaterial = new Material(shaderLit);
 	emeraldMaterial->ambient = glm::vec3(0.0215f, 0.1745f, 0.0215f);
@@ -55,7 +64,10 @@ Scene::Scene() {
 	plasticMaterial->specular = glm::vec3(0.7f);
 	plasticMaterial->shininess = 0.25f * 128.0f;
 	
-	stbi_image_free(shaderBallDiffuse.data);
+	for (unsigned int i = 0; i < textures.size(); i++)
+	{
+		textures[i]->free();
+	}
 
 	GameObject* light = createGameObject();
 	light->addComponent(new MeshRenderer(cubeMesh, lightMaterial));
@@ -133,4 +145,15 @@ GameObject* Scene::createGameObject() {
 	return gameObject;
 }
 
+void Scene::createTexture(const char* path, Texture* texture) {
+	texture->data = stbi_load(path, &texture->width, &texture->height, &texture->channelsCount, 0);
+
+	if (texture->data) {
+		textures.push_back(texture);
+	}
+	else {
+		std::cout << "Texture failed to load at path: " << path << std::endl;
+		texture->free();
+	}
+}
 #endif
