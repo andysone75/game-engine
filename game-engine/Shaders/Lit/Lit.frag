@@ -37,7 +37,7 @@ void main() {
 
 	vec3 lightDir = normalize(fs_in.tangentLightPos - fs_in.tangentFragPos);
 	vec3 viewDir = normalize(fs_in.tangentViewPos - fs_in.tangentFragPos);
-	vec3 reflectDir = reflect(-lightDir, normal);
+	vec3 halfwayDir = normalize(lightDir + viewDir);
 	
 	vec3 ambient = light.ambient * material.ambient;
 
@@ -45,7 +45,7 @@ void main() {
 	vec3 diffuse = light.diffuse * material.diffuse * d;
 
 	float specularStrengh = 0.5;
-	float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
+	float spec = pow(max(dot(normal, halfwayDir), 0.0), material.shininess);
 	vec3 specular = light.specular * material.specular * spec;
 	
 	vec4 diffuseColor = texture(material.diffuseTexture, fs_in.fragUv);

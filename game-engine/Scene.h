@@ -30,21 +30,29 @@ Scene::Scene() {
 	Model* cubeSphereModel = new Model("Models/cube_sphere.fbx");
 	Model* hotdogModel = new Model("Models/hotdog.fbx");
 	Model* shaderBallModel = new Model("Models/shader-ball/source/shader_ball.obj");
+	Model* stoneFloorModel = new Model("Models/stone-floor/source/plane.fbx");
 
 	int channelsCount;
 
 	Texture shaderBallDiffuse;
 	Texture shaderBallNormal;
+	Texture stoneFloorDiffuse;
+	Texture stoneFloorNormal;
 
 	shaderBallDiffuse.type = "diffuseTexture";
+	stoneFloorDiffuse.type = "diffuseTexture";
 	shaderBallNormal.type = "normalTexture";
+	stoneFloorNormal.type = "normalTexture";
 
 	createTexture("Models/shader-ball/textures/ShaderBallJL01_BaseColor.jpeg", &shaderBallDiffuse);
 	createTexture("Models/shader-ball/textures/ShaderBallJL01_Normal.jpeg", &shaderBallNormal);
+	createTexture("Models/stone-floor/textures/Floortile1Color.png", &stoneFloorDiffuse);
+	createTexture("Models/stone-floor/textures/Floortile1Normal.png", &stoneFloorNormal);
 
 	Material* lightMaterial = new Material(shaderDefault);
 	Material* defaultMaterial = new Material(shaderLit);
 	Material* shaderBallMaterial = new Material(shaderLit, &shaderBallDiffuse, &shaderBallNormal);
+	Material* stoneFloorMaterial = new Material(shaderLit, &stoneFloorDiffuse, &stoneFloorNormal);
 
 	Material* emeraldMaterial = new Material(shaderLit);
 	emeraldMaterial->ambient = glm::vec3(0.0215f, 0.1745f, 0.0215f);
@@ -63,7 +71,7 @@ Scene::Scene() {
 	plasticMaterial->diffuse = glm::vec3(0.55f);
 	plasticMaterial->specular = glm::vec3(0.7f);
 	plasticMaterial->shininess = 0.25f * 128.0f;
-	
+
 	for (unsigned int i = 0; i < textures.size(); i++)
 	{
 		textures[i]->free();
@@ -100,27 +108,41 @@ Scene::Scene() {
 	//hotdogEmerald->scale = glm::vec3(0.05f);
 	//hotdogEmerald->position = glm::vec3(1.0f, 0.0f, 0.0f);
 
-	std::array<Material*, 1> shaderBallMaterials = {
-		shaderBallMaterial,
-	};
+	// // Shader Ball
+	//std::array<Material*, 1> shaderBallMaterials = {
+	//	shaderBallMaterial,
+	//};
 
-	float scale = 1.0f;
-	glm::vec3 pos = glm::vec3(0.0f, 0.5f, -1.5f);
-	for (unsigned int i = 0; i < shaderBallModel->getMeshesCount(); i++)
+	//float scale = 1.0f;
+	//glm::vec3 pos = glm::vec3(0.0f, 0.5f, -1.5f);
+	//for (unsigned int i = 0; i < shaderBallModel->getMeshesCount(); i++)
+	//{
+	//	Material* mat;
+
+	//	if (i >= shaderBallMaterials.size()) {
+	//		mat = defaultMaterial;
+	//	}
+	//	else {
+	//		mat = shaderBallMaterials[i];
+	//	}
+
+	//	GameObject* o = createGameObject()
+	//		->addComponent(new MeshRenderer(shaderBallModel->getMesh(i), mat));
+	//	o->scale = glm::vec3(scale);
+	//	o->position = pos;
+	//}
+
+	float floorStep = 4.0f;
+	for (int i = 0; i < 3; i++)
 	{
-		Material* mat;
+		for (int j = 0; j < 3; j++)
+		{
+			GameObject* floor = createGameObject()
+				->addComponent(new MeshRenderer(stoneFloorModel->getMesh(0), stoneFloorMaterial));
 
-		if (i >= shaderBallMaterials.size()) {
-			mat = defaultMaterial;
+			floor->scale = glm::vec3(0.01f);
+			floor->position = glm::vec3(i * floorStep, 0.0f, j * floorStep);
 		}
-		else {
-			mat = shaderBallMaterials[i];
-		}
-
-		GameObject* o = createGameObject()
-			->addComponent(new MeshRenderer(shaderBallModel->getMesh(i), mat));
-		o->scale = glm::vec3(scale);
-		o->position = pos;
 	}
 
 	for (size_t i = 0; i < gameObjects.size(); i++)
